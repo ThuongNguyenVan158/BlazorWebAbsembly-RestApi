@@ -1,0 +1,9 @@
+﻿@page "/"
+@using BlazorAppWebAssembly.Components
+<PageTitle>Manage Employee</PageTitle>
+<AddEmployee EmployeeCreated="OnEmployeeCreated" />
+<EmployeeList @ref="_employeeList"></EmployeeList>
+@code{
+    private EmployeeList _employeeList;
+    private async Task OnEmployeeCreated() => await _employeeList.FetchData();
+}

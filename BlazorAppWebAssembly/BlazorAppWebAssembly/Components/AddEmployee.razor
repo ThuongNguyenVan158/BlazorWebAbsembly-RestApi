@@ -1,0 +1,56 @@
+﻿@using BlazorAppWebAssembly.Service
+@using WebApp.Model.Dtos
+@inject IEmployeeService employeeService
+<Button Color="Color.Primary" Clicked="@ShowModal">Add Employee</Button>
+
+<Modal @ref="_modal" >
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Add Employee</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <EditForm Model=@employee OnValidSubmit="@HandleValidSubmit">
+                <Field>
+                    <FieldLabel>Name</FieldLabel>
+                    <TextEdit Placeholder="Enter name..." @bind-Text="@employee.Name"/>
+                </Field>
+                <Field>
+                    <FieldLabel>BirthDate</FieldLabel>
+                    <DatePicker @bind-Date="@employee.BirthDate"></DatePicker>
+                </Field>
+                <Field>
+                    <FieldLabel>Email</FieldLabel>
+                    <TextEdit Placeholder="Enter email..." @bind-Text="@employee.Email" />
+                </Field>
+                <Field>
+                    <FieldLabel>Phone</FieldLabel>
+                    <TextEdit Placeholder="Enter phone..." @bind-Text="@employee.Phone" />
+                </Field>
+                 <Field>
+                    <FieldLabel>TimeStartWork</FieldLabel>
+                    <DatePicker @bind-Date="@employee.TimeStartWork"></DatePicker>
+                </Field>
+                <Button Color="Color.Secondary" Type=ButtonType.Button Clicked="() =>{ _modal.Hide();}">Close</Button>
+                <Button Color="Color.Primary" Type=ButtonType.Submit >Save Changes</Button>
+            </EditForm>
+        </ModalBody>
+    </ModalContent>
+</Modal>
+@code{
+    private EmployeeDto employee = new();
+    private Modal _modal;
+    [Parameter]
+    public EventCallback EmployeeCreated { get; set; }
+
+    private async Task ShowModal()
+    {
+        await _modal.Show();
+    }
+    protected async Task HandleValidSubmit()
+    {
+        await employeeService.AddItem(employee);
+        await EmployeeCreated.InvokeAsync();
+        _modal.Hide();
+    }
+}

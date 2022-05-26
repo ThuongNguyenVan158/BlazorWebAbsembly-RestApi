@@ -1,0 +1,57 @@
+﻿@using BlazorAppWebAssembly.Service
+@using Blazorise
+@using WebApp.Model.Dtos
+@inject IEmployeeService employeeService
+<h3>EmployeeList</h3>
+<Table>
+    <TableHeader>
+        <TableRow>
+            <TableHeaderCell>Name</TableHeaderCell>
+            <TableHeaderCell>Birthdate</TableHeaderCell>
+            <TableHeaderCell>Email</TableHeaderCell>
+            <TableHeaderCell>Phone</TableHeaderCell>
+            <TableHeaderCell>TimeStartWorking</TableHeaderCell>
+            <TableHeaderCell>Delete</TableHeaderCell>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        @foreach (var item in _employees)
+        {
+            <TableRow>
+                <TableRowCell>@item.Name</TableRowCell>
+                <TableRowCell>@item.BirthDate.ToShortDateString()</TableRowCell>
+                <TableRowCell>@item.Email</TableRowCell>
+                <TableRowCell>@item.Phone</TableRowCell>
+                <TableRowCell>@item.TimeStartWork.ToShortDateString()</TableRowCell>
+                <TableRowCell>
+                    <Button @onclick="() =>Deleteitem(item.Id)">
+                        <i class="far fa-trash-alt" aria-hidden="true"
+                       ></i>
+                    </Button>
+                </TableRowCell>
+            </TableRow>
+        }
+    </TableBody>
+</Table>
+@code {
+    private IEnumerable<EmployeeDto> _employees;
+    protected override async Task OnInitializedAsync()
+    {
+        _employees = await employeeService.GetAllEmployee();
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+       
+    }
+    protected async Task Deleteitem(Guid id)
+    {
+        await employeeService.DeleteItem(id);
+        _employees = await employeeService.GetAllEmployee();
+    }
+    public async Task FetchData() 
+    { 
+        _employees = await employeeService.GetAllEmployee();
+        StateHasChanged(); 
+    }
+}
